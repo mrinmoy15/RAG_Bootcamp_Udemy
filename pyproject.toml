@@ -6,6 +6,7 @@ readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
     "arxiv>=2.2.0",
+    "certifi>=2026.2.25",
     "chromadb>=1.0.17",
     "docx2txt>=0.9",
     "faiss-cpu>=1.12.0",
@@ -30,7 +31,7 @@ dependencies = [
     "openpyxl>=3.1.5",
     "pandas>=2.3.1",
     "pinecone>=7.3.0",
-    "pymupdf>=1.26.3",
+    "pymupdf>=1.27.2",
     "pypdf>=6.0.0",
     "python-docx>=1.2.0",
     "python-dotenv>=1.1.1",

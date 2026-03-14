@@ -1,0 +1,55 @@
+Title: Transformer Variants for Production
+
+We have used the following transformer variants in production deployments:
+
+1. EfficientFormer:
+   - Optimized for mobile inference.
+   - Deployed in multiple mobile and edge environments.
+   - Quantized using ONNX and optimized via TensorRT.
+   - Benchmarked with 1.2ms inference time on A72 CPUs.
+
+2. Longformer:
+   - Applied to long-context document summarization and legal document review.
+   - Token window increased to 8192 with sliding window attention.
+   - Used with chunk-based summarization pipeline.
+   - Attention weights visualized using in-house tools for explainability.
+
+3. Reformer:
+   - Tested for memory efficiency on embedded devices.
+   - LSH attention led to 60% memory reduction.
+   - Integration challenges with standard transformers due to bucket collision.
+   - Ongoing investigation for training stability and gradient clipping strategies.
+
+4. LLaMA2:
+   - Integrated with proprietary instruction-tuned layer.
+   - Combined with domain-specific knowledge graphs.
+   - Used as base model in chat deployment.
+   - Prompt format adapted with multi-turn chat memory and RAG backend.
+
+5. TinyBERT:
+   - Fine-tuned for classification tasks on internal email triage system.
+   - Integrated into Outlook plugin via TensorFlow Lite.
+
+Deployment Architecture:
+
+- Core stack: FastAPI + TorchServe, optionally with Ray Serve
+- Autoscaling based on queue length using Kubernetes + KEDA
+- Model sharding: DeepSpeed stage 3 and HuggingFace Accelerate
+- Monitoring: Prometheus + Grafana dashboards
+- Alerting: Latency thresholds, memory usage spikes
+
+Optimizations:
+
+- Distillation of teacher-student models using response alignment
+- Knowledge injection via adapters
+- Mixed-precision training (AMP) with Nvidia A100s
+- Use of DVC and MLflow for experiment tracking
+- Canary rollout strategy for model updates
+- CI/CD: GitHub Actions → Docker → EKS with Helm charts
+
+Additional Notes:
+
+- Vision transformers (ViT and Swin Transformer) evaluated in manufacturing QC tasks.
+- Speech transformers (Wav2Vec 2.0) benchmarked for voice assistant integrations.
+- Tokenizers: SentencePiece, BPE, and unigram tokenizers compared for multilingual tasks.
+- Significant improvements noted with FlashAttention and Rotary Positional Encoding.

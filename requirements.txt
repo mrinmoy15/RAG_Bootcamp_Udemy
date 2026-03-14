@@ -31,3 +31,4 @@ wikipedia
 arxiv
 langgraph
 langgraph-cli[inmem]
+certifi
