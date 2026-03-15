@@ -32,3 +32,4 @@ arxiv
 langgraph
 langgraph-cli[inmem]
 certifi
+langgraph-supervisor

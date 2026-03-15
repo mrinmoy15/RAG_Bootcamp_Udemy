@@ -24,6 +24,7 @@ dependencies = [
     "langchain-tavily>=0.2.11",
     "langgraph>=0.6.6",
     "langgraph-cli[inmem]>=0.4.2",
+    "langgraph-supervisor>=0.0.31",
     "matplotlib>=3.10.5",
     "msoffcrypto-tool>=5.4.2",
     "numpy>=2.3.2",
