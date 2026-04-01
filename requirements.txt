@@ -33,3 +33,5 @@ langgraph
 langgraph-cli[inmem]
 certifi
 langgraph-supervisor
+langchain-neo4j
+neo4j
