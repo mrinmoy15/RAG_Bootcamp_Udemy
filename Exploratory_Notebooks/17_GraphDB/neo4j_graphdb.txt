@@ -1,0 +1,127 @@
+## details
+###############################################
+
+# Wait 60 seconds before connecting using these details, or login to https://console.neo4j.io to validate the Aura Instance is available
+NEO4J_URI=neo4j+s://f3660f22.databases.neo4j.io
+NEO4J_USERNAME=neo4j
+NEO4J_PASSWORD=sO4ReKfkVB73Use0s417Q39qw_6h3qS2UnRIv4gEn5s
+NEO4J_DATABASE=neo4j
+AURA_INSTANCEID=f3660f22
+AURA_INSTANCENAME=My instance
+
+
+#################################################
+RDBMS                   GRAPH DB 
+1. Tables               GRAPH
+2. Rcords               Nodes 
+3. Columns and data     Properties and Values
+4. Constraints:         Relationship
+Primary, Foreign, 
+Candidate Key
+5. Joins                Traversal
+
+Advantages of Neo 4j:
+======================
+1. Data Model: Nodes, Relationship, Properties, Values
+2. Real time insights
+3. Easy Retrieval: Cypher Query
+4. Cypher Query Language: Declarative Query Language to represent the Graph visually.
+5. ACID properties are supported (Atomicity, Consistancy, Isolation, Durability)
+6. No Joins
+
+Neo4j Property Graph Data Model
+===============================
+1. Nodes, 2. Relationships (Can be unidirectional or Bidirectional), 3. Properties (Key Value pairs)
+
+
+## Cypher Quer Language Basic Example (you can write all thes queries in the neo4j console)
+============================================================================================
+CREATE(node1);
+
+CREATE(Elon:CEO);
+
+CREATE(Elon:CEO:Employee);
+
+CREATE(Elon:CEO{name:"ElonMusk", YOB: 1979, POB:"SA"});
+
+MATCH(n) return n;
+
+CREATE(Tesla:Company{name:"Tesla"});
+
+## Create Relationship
+CREATE(s:MovieStar{name: "Tom Hanks", born:1956})
+CREATE(n:Movie{title:"Forest Gump", released: 1994})
+
+MATCH(s:MovieStar{name:'Tom Hanks'}),(n:Movie{title:"Forest Gump"})
+CREATE (p)-[:ACTED_IN]->(m)
+
+
+# Intermediate to Advanced Cypher queries
+============================================
+LOAD CSV WITH HEADERS FROM 
+'https://raw.githubusercontent.com/krishnaik06/graph-dataset/main/users_social.csv' 
+AS row
+RETURN row LIMIT 5
+;
+
+LOAD CSV WITH HEADERS FROM 
+'https://raw.githubusercontent.com/krishnaik06/graph-dataset/main/users_social.csv' 
+AS row
+CREATE (:User{userId:toInteger(row.userId), name:row.name, age:toInteger(row.age), city:row.city});
+;
+
+LOAD CSV WITH HEADERS FROM 
+'https://raw.githubusercontent.com/krishnaik06/graph-dataset/main/posts.csv' 
+AS row
+MATCH(u:User{userId:toInteger(row.userId)})
+CREATE (u)-[:POSTED]->(:Post{postId:toInteger(row.postId), content:row.content, timestamp:datetime(row.timestamp)})
+;
+
+
+LOAD CSV WITH HEADERS FROM
+'https://raw.githubusercontent.com/krishnaik06/graph-dataset/main/relationships.csv'
+AS row
+MATCH (u1:User {userId: toInteger(row.userId1)})
+MATCH (u2:User {userId: toInteger(row.userId2)})
+RETURN count(*) AS matchedRows
+;
+
+
+LOAD CSV WITH HEADERS FROM
+'https://raw.githubusercontent.com/krishnaik06/graph-dataset/main/relationships.csv'
+AS row
+CALL (row) {
+  MATCH (u1:User {userId: toInteger(row.userId1)})
+  MATCH (u2:User {userId: toInteger(row.userId2)})
+  MERGE (u1)-[:FRIEND]->(u2)
+  MERGE (u1)-[:LIKES]->(u2)
+} IN TRANSACTIONS OF 500 ROWS
+;
+
+# Some basic queries on these
+
+# 1. Retrieve all users
+MATCH (u:User) RETURN u
+
+# 2. Retrieve all the posts
+MATCH (p:Post) RETURN p
+
+# 3. Retrive the friends of a specific userId
+MATCH (u:User {name: "John"})-[:FRIEND]->(f:User)
+RETURN f.name AS friendName
+
+# 4. Retrieve the posts made by the friends of a particular user
+MATCH (u: User{name:"John"})-[:FRIEND]->(f:User)-[:POSTED] ->(p:Post)
+RETURN f.name AS friendName, p.content AS friendContent
+;
+
+# 5. Retrive all the likes of the posts of a particular user "John"
+MATCH (u:User{name:"Jhon})-[:POSTED]->(p:Post)<-[:LIKES]-(l:User)
+RETURN l.name AS friendName, p.content AS LikedContent
+;
+
+# 6. Count the number of friends each user have
+MATCH(u:User)-[:FRIEND]-(f:User)
+RETURN u.name, COUNT(f) AS numberOfFriends
+ORDER BY numberOfFriends DESC
+;
